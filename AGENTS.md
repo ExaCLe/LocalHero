@@ -1,7 +1,9 @@
 # Project Context
 
 **Stack:** Next.js (Frontend), FastAPI (Backend), PostgreSQL (Database).
+
 **Deployment:** Vercel (Frontend), Vercel/Railway/AWS (Backend).
+
 **Architecture:** Hybrid Rendering. The Next.js App Router handles Server-Side Rendering (SSR) and Server Components (
 RSC), interacting with the FastAPI backend via REST.
 
