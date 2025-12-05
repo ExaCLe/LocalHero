@@ -1,1 +1,8 @@
-fastapi[standard]
+fastapi
+alembic
+uvicorn[standard]
+sqlalchemy
+psycopg2-binary
+python-dotenv
+pytest
+pre-commit

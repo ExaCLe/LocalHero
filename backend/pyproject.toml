@@ -1,0 +1,44 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "FastAPI backend"
+authors = [{ name = "You" }]
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "sqlalchemy",
+    "psycopg2-binary",
+    "python-dotenv",
+]
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+
+[tool.ruff]
+line-length = 140
+target-version = "py312"
+indent-width = 4
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]  # Expand later
+fixable = ["ALL"]
+
+[tool.mypy]
+python_version = "3.11"
+mypy_path = ["backend"]
+plugins = ["pydantic.mypy"]
+warn_unused_ignores = true
+warn_return_any = true
+
+[[tool.mypy.overrides]]
+module = [
+  "sqlalchemy.*",
+  "psycopg2.*",
+  "fastapi.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

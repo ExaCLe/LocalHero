@@ -1,2 +1,17 @@
 .DS_Store
-.idea/
+.env
+
+# Ignore everything in .idea by default
+.idea/*
+
+# But allow some specific shared settings
+!.idea/codeStyles
+!.idea/codeStyles/*
+!.idea/inspectionProfiles
+!.idea/inspectionProfiles/*
+!.idea/fileColors.xml
+!.idea/runConfigurations
+!.idea/runConfigurations/*
+!.idea/dictionaries
+!.idea/dictionaries/*
+!.idea/scopes/
