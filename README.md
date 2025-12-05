@@ -44,4 +44,15 @@ pre-commit run --all-files
 
 ## Backend
 ### Migrations 
-
+You can create a new migration using:
+```bash
+alembic revision --autogenerate -m "add items table"
+```
+Then apply the migration using (there also is a run config in PyCharm):
+```bash
+alembic upgrade head
+```
+You can undo the last migration using:
+```bash
+alembic downgrade -1
+```

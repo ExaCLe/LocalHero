@@ -1,8 +1,23 @@
+import os
 from logging.config import fileConfig
 
+from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
+from app.database import Base
+
+load_dotenv()
+
+config = context.config
+
+db_url = os.getenv("DATABASE_URL")
+if db_url is None:
+    raise RuntimeError("DATABASE_URL is not set")
+
+config.set_main_option("sqlalchemy.url", db_url)
+
+target_metadata = Base.metadata
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
