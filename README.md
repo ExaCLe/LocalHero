@@ -2,7 +2,7 @@
 
 ## Backend Setup
 1. Create database:
-```bash 
+```bash
 psql -U postgres -h localhost -c "CREATE DATABASE local_hero;"
 tourch backend/.env
 echo "DATABASE_URL=postgresql://postgres:password@localhost:5432/local_hero" > backend/.env
@@ -13,7 +13,7 @@ echo "DATABASE_URL=postgresql://postgres:password@localhost:5432/local_hero" > b
 cd backend
 pip install -r requirements.txt
 ```
-3. Create the .env file 
+3. Create the .env file
 ```bash
 echo "DATABASE_URL=postgresql+psycopg2://postgres:postgres@localhost:5432/local_hero" > .env
 ```
@@ -44,10 +44,10 @@ You can now run it manually using:
 pre-commit run --all-files
 ```
 
-# Development 
+# Development
 
 ## Backend
-### Migrations 
+### Migrations
 You can create a new migration using:
 ```bash
 alembic revision --autogenerate -m "add items table"

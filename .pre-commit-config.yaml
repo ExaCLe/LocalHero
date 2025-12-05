@@ -3,7 +3,7 @@ repos:
     rev: v0.14.8
     hooks:
       - id: ruff
-        args: [--fix]
+        args: [ --fix ]
         files: ^backend/.*\.py$
 
   - repo: https://github.com/psf/black
@@ -34,3 +34,28 @@ repos:
           - types-psycopg2
           - pydantic
           - fastapi
+
+  - repo: local
+    hooks:
+      - id: frontend-eslint
+        name: Frontend ESLint (next lint)
+        language: system
+        pass_filenames: false
+        types_or: [ javascript, jsx, ts, tsx ]
+        files: ^frontend/
+        entry: bash
+        args:
+          - -lc
+          - cd frontend && npm run lint
+
+      - id: frontend-type-check
+        name: Frontend TypeScript type-check
+        language: system
+        pass_filenames: false
+        types_or: [ ts, tsx ]
+        files: ^frontend/
+        entry: bash
+        args:
+          - -lc
+          - cd frontend && npm run type-check
+
