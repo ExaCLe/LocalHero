@@ -13,15 +13,19 @@ echo "DATABASE_URL=postgresql://postgres:password@localhost:5432/local_hero" > b
 cd backend
 pip install -r requirements.txt
 ```
-3. Run migrations
+3. Create the .env file 
+```bash
+echo "DATABASE_URL=postgresql+psycopg2://postgres:postgres@localhost:5432/local_hero" > .env
+```
+4. Run migrations
 ```bash
 alembic upgrade head
 ```
-4. Start the backend server
+5. Start the backend server
 ```bash
 uvicorn main:app --reload
 ```
-or if using PyCharm, run the configuration for `main.py`.
+or if using PyCharm, run the configuration for `Backend`.
 
 
 ## Frontend Setup
