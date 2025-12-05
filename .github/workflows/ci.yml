@@ -105,7 +105,7 @@ jobs:
           if-no-files-found: ignore
 
   test-frontend:
-    name: Frontend tests (Jest + lint + type-check)
+    name: Frontend tests (Playwright + lint + type-check)
     runs-on: ubuntu-latest
 
     steps:
@@ -132,6 +132,10 @@ jobs:
         working-directory: frontend
         run: npm run type-check
 
-      - name: Run frontend tests (Jest)
+      - name: Install Playwright browsers
         working-directory: frontend
-        run: npm test -- --runInBand
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        working-directory: frontend
+        run: npm test -- --reporter=line
