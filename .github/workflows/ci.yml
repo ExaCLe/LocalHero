@@ -11,7 +11,7 @@ concurrency:
 jobs:
   lint:
     name:
-      Lint (pre-commit: backend + frontend)
+      'Lint (pre-commit: backend + frontend)'
     runs-on: ubuntu-latest
 
     steps:
