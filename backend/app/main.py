@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
 from .database import engine
+from .schemas.health import HealthResponse
 
 app = FastAPI()
 
@@ -21,10 +22,10 @@ app.add_middleware(
 
 
 @app.get("/health")
-def health_check() -> dict:
+def health_check() -> HealthResponse:
     try:
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
-        return {"status": "ok", "database": "connected"}
-    except Exception as e:
-        return {"status": "error", "database": str(e)}
+        return HealthResponse(status="ok", database="connected")
+    except Exception:
+        return HealthResponse(status="error", database="disconnected")

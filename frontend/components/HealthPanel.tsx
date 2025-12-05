@@ -1,14 +1,14 @@
-export type HealthResponse = {
-  status: string;
-  database: string;
-};
+import type {components} from "@/src/lib/openapi-types";
+
+export type HealthResponse = components["schemas"]["HealthResponse"];
 
 type Props = {
   health: HealthResponse | null;
 };
 
 export function HealthPanel({health}: Readonly<Props>) {
-  const ok = health?.status === "ok" && health?.database === "connected";
+  const isHealthy =
+    health?.status === "ok" && health?.database === "connected";
 
   if (health === null) {
     return (
@@ -19,7 +19,7 @@ export function HealthPanel({health}: Readonly<Props>) {
     );
   }
 
-  if (ok) {
+  if (isHealthy) {
     return (
       <>
         <p
