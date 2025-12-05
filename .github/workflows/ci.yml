@@ -45,27 +45,10 @@ jobs:
         run: pre-commit run --all-files --show-diff-on-failure
 
   test-backend:
-    name: Backend tests (pytest)
+    name: Backend tests (pytest + Testcontainers)
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: local_hero
-        ports:
-          - 5432:5432
-        # Wait for Postgres to be ready
-        options: >-
-          --health-cmd="pg_isready -U postgres"
-          --health-interval=5s
-          --health-timeout=5s
-          --health-retries=5
-
     env:
-      DATABASE_URL: postgresql+psycopg2://postgres:postgres@localhost:5432/local_hero
       PYTHONPATH: ${{ github.workspace }}/backend
 
     steps:
@@ -81,16 +64,8 @@ jobs:
         working-directory: backend
         run: |
           python -m pip install --upgrade pip
-          # If you have a requirements file for the backend:
-          if [ -f requirements.txt ]; then
-            pip install -r requirements.txt
-          fi
-          # Make sure pytest etc. available
-          pip install pytest pytest-cov alembic httpx
-
-      - name: Run Alembic migrations
-        working-directory: backend
-        run: alembic upgrade head
+          pip install -r requirements.txt
+          pip install pytest pytest-cov testcontainers[test]
 
       - name: Run backend tests
         working-directory: backend
