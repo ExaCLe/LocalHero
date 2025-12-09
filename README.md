@@ -60,3 +60,4 @@ You can undo the last migration using:
 ```bash
 alembic downgrade -1
 ```
+Have Fun!
