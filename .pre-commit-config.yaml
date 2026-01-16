@@ -37,6 +37,19 @@ repos:
 
   - repo: local
     hooks:
+      - id: sync-openapi-types
+        name: Sync OpenAPI schema & frontend TS types
+        language: python
+        pass_filenames: false
+        entry: python backend/scripts/sync_openapi_types.py
+        additional_dependencies:
+          - fastapi
+          - "uvicorn[standard]"
+          - pydantic
+          - sqlalchemy
+          - psycopg2-binary
+          - python-dotenv
+          
       - id: frontend-eslint
         name: Frontend ESLint (next lint)
         language: system

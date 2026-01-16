@@ -4,7 +4,7 @@
 1. Create database:
 ```bash
 psql -U postgres -h localhost -c "CREATE DATABASE local_hero;"
-tourch backend/.env
+touch backend/.env
 echo "DATABASE_URL=postgresql://postgres:password@localhost:5432/local_hero" > backend/.env
 ```
 2. Install dependencies
@@ -60,3 +60,4 @@ You can undo the last migration using:
 ```bash
 alembic downgrade -1
 ```
+Have Fun!
