@@ -1,91 +1,114 @@
-# Project Context
+# CLAUDE.md
 
-**Stack:** Next.js (Frontend), FastAPI (Backend), PostgreSQL (Database).
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**Deployment:** Vercel (Frontend), Vercel/Railway/AWS (Backend).
+## Project Overview
 
-**Architecture:** Hybrid Rendering. The Next.js App Router handles Server-Side Rendering (SSR) and Server Components (
-RSC), interacting with the FastAPI backend via REST.
+LocalHero is a full-stack web application with a Python FastAPI backend and Next.js TypeScript frontend. Uses hybrid
+rendering with Next.js App Router (SSR/RSC) communicating with FastAPI via REST.
 
----
+## Commands
 
-# 1. Naming Conventions (STRICT)
+### Backend (from `backend/` directory)
 
-**Goal:** clarity over brevity. Code must be self-documenting.
+```bash
+uvicorn main:app --reload              # Start dev server (http://localhost:8000)
+pytest -q --maxfail=1 --cov=.          # Run tests with coverage
+alembic upgrade head                   # Apply all migrations
+alembic revision --autogenerate -m "message"  # Create new migration
+```
 
-* **Be Descriptive:** Name variables for what they *are*.
-    * ❌ `i`, `res`, `data`, `val`
-    * ✅ `row_index`, `api_response`, `user_profile`, `transaction_value`
-    * **Do not abbreviate.** (e.g., use `calculate_total`, not `calc_tot`).
-* **Include Units:** Numeric variables must include their unit in the suffix.
-    * ✅ `timeout_seconds`, `sampling_rate_hz`, `file_size_bytes`, `price_usd`.
-* **No Hungarian Notation:** Do not prefix names with type information.
-    * ❌ `str_name`, `list_users`, `dict_config`
-    * ✅ `name`, `users`, `config`
-* **No "Utils" Dumps:** Generic file names are forbidden. Group code by domain/purpose.
-    * ❌ `utils.py`, `helpers.py`, `common.py`
-    * ✅ `data_normalization.py`, `date_formatting.py`, `jwt_handler.py`
-* **Casing Styles:**
-    * **Python:** `snake_case` for variables/functions/modules. `PascalCase` for Classes/Pydantic Models.
-    * **TypeScript/JS:** `camelCase` for variables/functions. `PascalCase` for Components/Classes. `kebab-case` for
-      filenames, routes and folders: `lowercase`.
-* **Consistency:** If a concept is named `user_id` in the database, do not call it `uid` in the frontend. Maintain
-  terminology across the stack.
+### Frontend (from `frontend/` directory)
 
----
+```bash
+npm run dev          # Start dev server (http://localhost:3000)
+npm run build        # Production build
+npm run lint         # ESLint
+npm run type-check   # TypeScript check
+npm test             # Jest tests
+npm test -- path/to/test.tsx  # Run single test file
+```
 
-# 2. Code Documentation & Comments
+### Pre-commit (from root)
 
-* **Self-Documenting Code:** The strict naming conventions above are the primary form of documentation.
-* **The "No-What" Rule:** Never write a comment explaining *what* the code is doing. If the code is hard to read,
-  refactor it, rename variables, or extract functions.
-* **The "Why" Exception:** Comments are permitted **only** to explain the reasoning behind unconventional decisions,
-  specific business logic constraints, or workarounds for external library bugs.
-    * ❌ `# Loop through users and save to DB`
-    * ✅ `# We use a bulk insert here instead of ORM save() to reduce round-trips for datasets > 10k rows.`
+```bash
+pre-commit run --all-files  # Run all hooks (ruff, black, mypy, eslint, type-check)
+```
 
----
+## Architecture
 
-# 3. Testing Strategy: High Value, Low Boilerplate
+```
+LocalHero/
+├── backend/           # FastAPI + SQLAlchemy + PostgreSQL
+│   ├── app/
+│   │   ├── main.py        # FastAPI app entry, routes
+│   │   ├── database.py    # DB connection & session
+│   │   ├── models.py      # SQLAlchemy ORM models
+│   │   ├── schemas.py     # Pydantic request/response schemas
+│   │   └── crud.py        # Database operations
+│   ├── alembic/           # Migration scripts
+│   └── tests/             # pytest tests
+├── frontend/          # Next.js 16 + React 19 + TypeScript
+│   ├── app/               # Next.js App Router pages
+│   ├── components/        # React components
+│   └── __tests__/         # Jest + React Testing Library
+└── .pre-commit-config.yaml
+```
 
-**Goal:** Confidence in deployment with minimal maintenance cost. Avoid "testing implementation details."
+## Environment Setup
 
-* **Prioritize Integration Tests:** Focus on "Vertical Slices." Test that an endpoint accepts data, persists it to the
-  DB, and returns the correct response.
-* **Avoid Excessive Mocking:** Do not mock the database or internal service calls unless absolutely necessary (e.g.,
-  external 3rd party APIs like Stripe/SendGrid). Use a real test database (containerized via Docker).
-* **Efficient Coverage:**
-    * Write one comprehensive test case covering the "happy path" and the most critical "edge case."
-    * Avoid writing 10 separate unit tests for helper functions if they are covered by the main integration test.
-* **Tooling:**
-    * **Backend:** `pytest` with `TestClient` (FastAPI) and `testcontainers` (for real Postgres instances).
-    * **Frontend:** Playwright/Cypress for E2E flows. Avoid heavy Jest unit testing for UI components unless they
-      contain complex logic.
+**Backend `.env`:**
 
----
+```
+DATABASE_URL=postgresql+psycopg2://postgres:postgres@localhost:5432/local_hero
+```
 
-# 4. Architecture & Coding Best Practices
+**Frontend `.env.local`:**
 
-### Backend (FastAPI)
+```
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+```
 
-* **Pydantic Everything:** Use Pydantic models for all Request bodies, Response schemas, and Environment variable
-  validation.
-* **Dependency Injection:** Use FastAPI `Depends` for database sessions and authentication dependencies.
-* **SQLAlchemy**: Prefer the synchronous engine unless performance requires async.
-* **Migrations:** All database changes must be done via `alembic`. Never alter the DB manually.
+## Key Configuration
 
-## Frontend (Next.js)
+- **Python:** 3.11+, Black (88 chars), Ruff (140 chars), MyPy strict mode
+- **TypeScript:** Strict mode, ES2017 target
+- **Database:** PostgreSQL 15
+- **CI:** Runs lint, backend tests, and frontend tests in parallel
 
-* **Server Components (RSC):** Fetch data in Server Components whenever possible to reduce client-side waterfalls.
-* **Type Safety:** Generate TypeScript interfaces from the FastAPI OpenAPI `json` schema (using tools like
-  `openapi-typescript-codegen`) to ensure frontend/backend contract alignment.
+## Coding Standards
 
----
+### Naming Conventions
 
-# 5. Workflow & Quality Assurance
+- **Be descriptive, no abbreviations:** `user_profile` not `data`, `calculate_total` not `calc_tot`
+- **Include units in numeric variables:** `timeout_seconds`, `file_size_bytes`, `price_usd`
+- **No Hungarian notation:** `users` not `list_users`
+- **No generic filenames:** Use `date_formatting.py` not `utils.py` or `helpers.py`
+- **Casing:**
+    - Python: `snake_case` for variables/functions, `PascalCase` for classes/Pydantic models
+    - TypeScript: `camelCase` for variables/functions, `PascalCase` for components, `kebab-case` for filenames
+- **Consistency across stack:** If it's `user_id` in the database, don't call it `uid` in frontend
 
-* **Linting:**
-    * **Linting**: ruff for lint-only, black for formatting.
-    * **TypeScript:** Use `ESLint`.
-* **Pre-commit Hooks:** Ensure `ruff check`, `ruff format`, and `tsc --noEmit` run before every commit.
-* **CI/CD:** Pipelines must fail if the linter warns or integration tests fail.
+### Comments
+
+- **No "what" comments** - refactor unclear code instead
+- **Only "why" comments** - explain unconventional decisions, business logic constraints, or workarounds
+
+### Testing
+
+- **Prioritize integration tests** over unit tests - test vertical slices (endpoint → DB → response)
+- **Avoid excessive mocking** - use real test database, only mock external APIs (Stripe, SendGrid)
+- **Backend:** pytest with TestClient
+- **Frontend:** Playwright/Cypress for E2E; avoid heavy Jest unit testing for simple UI components
+
+### Backend Patterns
+
+- Use Pydantic models for all requests, responses, and environment validation
+- Use FastAPI `Depends` for DB sessions and auth
+- Prefer synchronous SQLAlchemy unless performance requires async
+- All DB changes via Alembic migrations only
+
+### Frontend Patterns
+
+- Fetch data in Server Components to reduce client-side waterfalls
+- Generate TypeScript interfaces from FastAPI OpenAPI schema for type safety
