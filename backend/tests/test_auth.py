@@ -53,7 +53,9 @@ class TestRegistration:
         assert "Registration successful" in data["message"]
         assert "verify" in data["message"].lower()
 
-    def test_register_duplicate_email(self, api_client: TestClient, clean_db: None) -> None:
+    def test_register_duplicate_email(
+        self, api_client: TestClient, clean_db: None
+    ) -> None:
         """Test registration with duplicate email."""
         user_data = {
             "email": "test@example.com",
@@ -79,7 +81,9 @@ class TestRegistration:
         assert response.status_code == 400
         assert "email" in response.json()["detail"]
 
-    def test_register_duplicate_email_case_insensitive(self, api_client: TestClient, clean_db: None) -> None:
+    def test_register_duplicate_email_case_insensitive(
+        self, api_client: TestClient, clean_db: None
+    ) -> None:
         """Test registration with duplicate email (case-insensitive)."""
         api_client.post(
             "/auth/register",
@@ -106,7 +110,9 @@ class TestRegistration:
         assert response.status_code == 400
         assert "email" in response.json()["detail"]
 
-    def test_register_duplicate_username(self, api_client: TestClient, clean_db: None) -> None:
+    def test_register_duplicate_username(
+        self, api_client: TestClient, clean_db: None
+    ) -> None:
         """Test registration with duplicate username."""
         api_client.post(
             "/auth/register",
@@ -133,7 +139,9 @@ class TestRegistration:
         assert response.status_code == 400
         assert "username" in response.json()["detail"]
 
-    def test_register_duplicate_username_case_insensitive(self, api_client: TestClient, clean_db: None) -> None:
+    def test_register_duplicate_username_case_insensitive(
+        self, api_client: TestClient, clean_db: None
+    ) -> None:
         """Test registration with duplicate username (case-insensitive)."""
         api_client.post(
             "/auth/register",
@@ -160,7 +168,9 @@ class TestRegistration:
         assert response.status_code == 400
         assert "username" in response.json()["detail"]
 
-    def test_register_weak_password_too_short(self, api_client: TestClient, clean_db: None) -> None:
+    def test_register_weak_password_too_short(
+        self, api_client: TestClient, clean_db: None
+    ) -> None:
         """Test registration with password too short."""
         response = api_client.post(
             "/auth/register",
@@ -176,7 +186,9 @@ class TestRegistration:
         assert response.status_code == 400
         assert "password" in response.json()["detail"]
 
-    def test_register_weak_password_common(self, api_client: TestClient, clean_db: None) -> None:
+    def test_register_weak_password_common(
+        self, api_client: TestClient, clean_db: None
+    ) -> None:
         """Test registration with common password."""
         response = api_client.post(
             "/auth/register",
@@ -192,7 +204,9 @@ class TestRegistration:
         assert response.status_code == 400
         assert "password" in response.json()["detail"]
 
-    def test_register_invalid_username_special_chars(self, api_client: TestClient, clean_db: None) -> None:
+    def test_register_invalid_username_special_chars(
+        self, api_client: TestClient, clean_db: None
+    ) -> None:
         """Test registration with invalid username (special characters)."""
         response = api_client.post(
             "/auth/register",
@@ -207,7 +221,9 @@ class TestRegistration:
 
         assert response.status_code == 422  # Pydantic validation error
 
-    def test_register_invalid_username_too_short(self, api_client: TestClient, clean_db: None) -> None:
+    def test_register_invalid_username_too_short(
+        self, api_client: TestClient, clean_db: None
+    ) -> None:
         """Test registration with username too short."""
         response = api_client.post(
             "/auth/register",
@@ -222,7 +238,9 @@ class TestRegistration:
 
         assert response.status_code == 422
 
-    def test_register_invalid_email(self, api_client: TestClient, clean_db: None) -> None:
+    def test_register_invalid_email(
+        self, api_client: TestClient, clean_db: None
+    ) -> None:
         """Test registration with invalid email."""
         response = api_client.post(
             "/auth/register",
@@ -241,7 +259,9 @@ class TestRegistration:
 class TestLogin:
     """Test user login endpoint."""
 
-    def _create_verified_user(self, api_client: TestClient, db_session: Session) -> dict[str, str]:
+    def _create_verified_user(
+        self, api_client: TestClient, db_session: Session
+    ) -> dict[str, str]:
         """Helper to create a verified user for login tests."""
         from app.crud import get_user_by_email
 
@@ -262,7 +282,9 @@ class TestLogin:
 
         return user_data
 
-    def test_login_with_valid_email(self, api_client: TestClient, db_session: Session, clean_db: None) -> None:
+    def test_login_with_valid_email(
+        self, api_client: TestClient, db_session: Session, clean_db: None
+    ) -> None:
         """Test login with valid email and password."""
         user_data = self._create_verified_user(api_client, db_session)
 
@@ -279,7 +301,9 @@ class TestLogin:
         assert "user" in data
         assert data["user"]["email"] == user_data["email"]
 
-    def test_login_with_valid_username(self, api_client: TestClient, db_session: Session, clean_db: None) -> None:
+    def test_login_with_valid_username(
+        self, api_client: TestClient, db_session: Session, clean_db: None
+    ) -> None:
         """Test login with valid username and password."""
         user_data = self._create_verified_user(api_client, db_session)
 
@@ -292,7 +316,9 @@ class TestLogin:
         data = response.json()
         assert "access_token" in data
 
-    def test_login_with_wrong_password(self, api_client: TestClient, db_session: Session, clean_db: None) -> None:
+    def test_login_with_wrong_password(
+        self, api_client: TestClient, db_session: Session, clean_db: None
+    ) -> None:
         """Test login with wrong password returns generic error."""
         user_data = self._create_verified_user(api_client, db_session)
 
@@ -304,7 +330,9 @@ class TestLogin:
         assert response.status_code == 401
         assert "Invalid email/username or password" in response.json()["detail"]
 
-    def test_login_with_nonexistent_user(self, api_client: TestClient, clean_db: None) -> None:
+    def test_login_with_nonexistent_user(
+        self, api_client: TestClient, clean_db: None
+    ) -> None:
         """Test login with non-existent user returns generic error."""
         response = api_client.post(
             "/auth/login",
@@ -314,7 +342,9 @@ class TestLogin:
         assert response.status_code == 401
         assert "Invalid email/username or password" in response.json()["detail"]
 
-    def test_login_with_unverified_email(self, api_client: TestClient, clean_db: None) -> None:
+    def test_login_with_unverified_email(
+        self, api_client: TestClient, clean_db: None
+    ) -> None:
         """Test login with unverified email returns specific error."""
         # Register but don't verify
         api_client.post(
@@ -338,13 +368,18 @@ class TestLogin:
         assert "verify your email" in data["detail"]
         assert data["email_not_verified"] is True
 
-    def test_login_case_insensitive_email(self, api_client: TestClient, db_session: Session, clean_db: None) -> None:
+    def test_login_case_insensitive_email(
+        self, api_client: TestClient, db_session: Session, clean_db: None
+    ) -> None:
         """Test login is case-insensitive for email."""
         user_data = self._create_verified_user(api_client, db_session)
 
         response = api_client.post(
             "/auth/login",
-            json={"email": user_data["email"].upper(), "password": user_data["password"]},
+            json={
+                "email": user_data["email"].upper(),
+                "password": user_data["password"],
+            },
         )
 
         assert response.status_code == 200
@@ -353,7 +388,9 @@ class TestLogin:
 class TestLoginActivity:
     """Test login activity logging."""
 
-    def _create_verified_user(self, api_client: TestClient, db_session: Session) -> dict[str, str]:
+    def _create_verified_user(
+        self, api_client: TestClient, db_session: Session
+    ) -> dict[str, str]:
         """Helper to create a verified user."""
         from app.crud import get_user_by_email
 
@@ -371,7 +408,9 @@ class TestLoginActivity:
             db_session.commit()
         return user_data
 
-    def test_successful_login_logged(self, api_client: TestClient, db_session: Session, clean_db: None) -> None:
+    def test_successful_login_logged(
+        self, api_client: TestClient, db_session: Session, clean_db: None
+    ) -> None:
         """Test that successful login is logged."""
         from app.models.users import LoginActivity
 
@@ -382,7 +421,11 @@ class TestLoginActivity:
             json={"email": user_data["email"], "password": user_data["password"]},
         )
 
-        activities = db_session.query(LoginActivity).filter(LoginActivity.email_attempted == user_data["email"]).all()
+        activities = (
+            db_session.query(LoginActivity)
+            .filter(LoginActivity.email_attempted == user_data["email"])
+            .all()
+        )
         assert len(activities) == 1
         assert activities[0].success is True
         assert activities[0].user_id is not None
@@ -400,12 +443,18 @@ class TestLoginActivity:
             json={"email": user_data["email"], "password": "WrongPassword123!"},
         )
 
-        activities = db_session.query(LoginActivity).filter(LoginActivity.email_attempted == user_data["email"]).all()
+        activities = (
+            db_session.query(LoginActivity)
+            .filter(LoginActivity.email_attempted == user_data["email"])
+            .all()
+        )
         assert len(activities) == 1
         assert activities[0].success is False
         assert activities[0].failure_reason == "invalid_password"
 
-    def test_failed_login_nonexistent_user_logged(self, api_client: TestClient, db_session: Session, clean_db: None) -> None:
+    def test_failed_login_nonexistent_user_logged(
+        self, api_client: TestClient, db_session: Session, clean_db: None
+    ) -> None:
         """Test that failed login with non-existent user is logged."""
         from app.models.users import LoginActivity
 
@@ -414,7 +463,11 @@ class TestLoginActivity:
             json={"email": "nobody@example.com", "password": "SomePassword123!"},
         )
 
-        activities = db_session.query(LoginActivity).filter(LoginActivity.email_attempted == "nobody@example.com").all()
+        activities = (
+            db_session.query(LoginActivity)
+            .filter(LoginActivity.email_attempted == "nobody@example.com")
+            .all()
+        )
         assert len(activities) == 1
         assert activities[0].success is False
         assert activities[0].failure_reason == "user_not_found"
@@ -450,7 +503,9 @@ class TestProtectedEndpoints:
         token = login_response.json()["access_token"]
         return user_data, token
 
-    def test_logout_with_valid_token(self, api_client: TestClient, db_session: Session, clean_db: None) -> None:
+    def test_logout_with_valid_token(
+        self, api_client: TestClient, db_session: Session, clean_db: None
+    ) -> None:
         """Test logout with valid token."""
         _, token = self._create_verified_user_and_token(api_client, db_session)
 
@@ -468,7 +523,9 @@ class TestProtectedEndpoints:
 
         assert response.status_code == 401
 
-    def test_logout_with_invalid_token(self, api_client: TestClient, clean_db: None) -> None:
+    def test_logout_with_invalid_token(
+        self, api_client: TestClient, clean_db: None
+    ) -> None:
         """Test logout with invalid token."""
         response = api_client.post(
             "/auth/logout",
@@ -477,7 +534,9 @@ class TestProtectedEndpoints:
 
         assert response.status_code == 401
 
-    def test_logout_with_expired_token(self, api_client: TestClient, db_session: Session, clean_db: None) -> None:
+    def test_logout_with_expired_token(
+        self, api_client: TestClient, db_session: Session, clean_db: None
+    ) -> None:
         """Test logout with expired token."""
         from datetime import timedelta
 

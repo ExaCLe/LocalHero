@@ -22,10 +22,11 @@ class TokenPayload(BaseModel):
 
 def _get_secret_key() -> str:
     """Get the JWT secret key, raising an error if not set."""
-    secret = JWT_SECRET_KEY or os.getenv("JWT_SECRET_KEY")
-    if not secret:
-        raise RuntimeError("JWT_SECRET_KEY environment variable is required but not set")
-    return secret
+    if not JWT_SECRET_KEY:
+        raise RuntimeError(
+            "JWT_SECRET_KEY environment variable is required but not set"
+        )
+    return JWT_SECRET_KEY
 
 
 def create_access_token(user_id: int, expires_delta: timedelta | None = None) -> str:

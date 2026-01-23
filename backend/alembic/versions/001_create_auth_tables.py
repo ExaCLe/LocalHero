@@ -55,8 +55,15 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(op.f("ix_login_activities_id"), "login_activities", ["id"], unique=False)
-    op.create_index(op.f("ix_login_activities_user_id"), "login_activities", ["user_id"], unique=False)
+    op.create_index(
+        op.f("ix_login_activities_id"), "login_activities", ["id"], unique=False
+    )
+    op.create_index(
+        op.f("ix_login_activities_user_id"),
+        "login_activities",
+        ["user_id"],
+        unique=False,
+    )
 
 
 def downgrade() -> None:

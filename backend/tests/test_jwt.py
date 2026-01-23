@@ -3,8 +3,6 @@
 import os
 from datetime import timedelta
 
-import pytest
-
 # Set JWT_SECRET_KEY before importing jwt module
 os.environ["JWT_SECRET_KEY"] = "test_secret_key_for_testing"
 

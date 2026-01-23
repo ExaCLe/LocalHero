@@ -47,7 +47,9 @@ def _get_user_agent(request: Request) -> str:
     return request.headers.get("User-Agent", "unknown")
 
 
-@router.post("/register", response_model=RegisterResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/register", response_model=RegisterResponse, status_code=status.HTTP_201_CREATED
+)
 def register(user_data: UserCreate, db: Session = Depends(get_db)) -> RegisterResponse:
     """
     Register a new user.
@@ -82,11 +84,15 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)) -> RegisterRe
     # Create user
     create_user(db, user_data)
 
-    return RegisterResponse(message="Registration successful. Please check your email to verify your account.")
+    return RegisterResponse(
+        message="Registration successful. Please check your email to verify your account."
+    )
 
 
 @router.post("/login", response_model=TokenResponse)
-def login(login_data: UserLogin, request: Request, db: Session = Depends(get_db)) -> TokenResponse:
+def login(
+    login_data: UserLogin, request: Request, db: Session = Depends(get_db)
+) -> TokenResponse:
     """
     Login a user.
 
@@ -154,7 +160,10 @@ def login(login_data: UserLogin, request: Request, db: Session = Depends(get_db)
         )
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail={"detail": "Please verify your email before logging in", "email_not_verified": True},
+            detail={
+                "detail": "Please verify your email before logging in",
+                "email_not_verified": True,
+            },
         )
 
     # Log successful login
