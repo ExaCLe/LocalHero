@@ -17,15 +17,48 @@ pip install -r requirements.txt
 ```bash
 echo "DATABASE_URL=postgresql+psycopg2://postgres:postgres@localhost:5432/local_hero" > .env
 ```
-4. Run migrations
+
+4. Generate and set the JWT secret key (see [JWT Key Generation](#jwt-key-generation) below)
+
+5. Run migrations
 ```bash
 alembic upgrade head
 ```
-5. Start the backend server
+6. Start the backend server
 ```bash
 uvicorn main:app --reload
 ```
 or if using PyCharm, run the configuration for `Backend`.
+
+### JWT Key Generation
+
+The backend requires a `JWT_SECRET_KEY` environment variable for authentication. Generate a secure key using one of the following methods:
+
+**Linux/macOS:**
+```bash
+openssl rand -hex 32
+```
+
+**Windows (PowerShell):**
+```powershell
+-join ((1..32) | ForEach-Object { '{0:X2}' -f (Get-Random -Maximum 256) })
+```
+
+**Python (cross-platform):**
+```bash
+python -c "import secrets; print(secrets.token_hex(32))"
+```
+
+Add the generated key to your `.env` file:
+```bash
+JWT_SECRET_KEY=your_generated_key_here
+```
+
+**Optional JWT Configuration:**
+```bash
+JWT_ALGORITHM=HS256           # Default: HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30 # Default: 30
+```
 
 
 ## Frontend Setup
