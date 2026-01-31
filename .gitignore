@@ -1,6 +1,6 @@
 .DS_Store
 .env
-
+*venv/
 # Ignore everything in .idea by default
 .idea/*
 
@@ -15,5 +15,6 @@
 !.idea/dictionaries
 !.idea/dictionaries/*
 !.idea/scopes/
+
 
 frontend/test-results/
