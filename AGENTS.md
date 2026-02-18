@@ -93,6 +93,9 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 
 - **No "what" comments** - refactor unclear code instead
 - **Only "why" comments** - explain unconventional decisions, business logic constraints, or workarounds
+- **No redundant docstrings** - avoid docstrings that simply restate the function name or describe what is obvious from the code (e.g., `"""Get a user by email."""` for a function named `get_user_by_email`)
+- **No inline comments describing obvious operations** - avoid comments like `# Validate email uniqueness` before `if get_user_by_email(db, email):`
+- **No numbered flow comments** - avoid docstrings that list steps like "1. Do X, 2. Do Y" - the code should be self-explanatory
 
 ### Testing
 

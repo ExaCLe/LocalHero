@@ -1,4 +1,4 @@
-"""create users and login_activities tables
+"""create user and login_activity tables
 
 Revision ID: 001_create_auth_tables
 Revises:
@@ -12,7 +12,6 @@ import sqlalchemy as sa
 
 from alembic import op
 
-# revision identifiers, used by Alembic.
 revision: str = "001_create_auth_tables"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
@@ -20,27 +19,30 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    # Create users table
     op.create_table(
-        "users",
+        "user",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("email", sa.String(), nullable=False),
         sa.Column("username", sa.String(), nullable=False),
         sa.Column("first_name", sa.String(), nullable=False),
         sa.Column("last_name", sa.String(), nullable=False),
         sa.Column("password_hash", sa.String(), nullable=False),
-        sa.Column("is_email_verified", sa.Boolean(), nullable=False, default=False),
+        sa.Column(
+            "is_email_verified",
+            sa.Boolean(),
+            nullable=False,
+            server_default=sa.false(),
+        ),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(op.f("ix_users_id"), "users", ["id"], unique=False)
-    op.create_index(op.f("ix_users_email"), "users", ["email"], unique=True)
-    op.create_index(op.f("ix_users_username"), "users", ["username"], unique=True)
+    op.create_index(op.f("ix_user_id"), "user", ["id"], unique=False)
+    op.create_index(op.f("ix_user_email"), "user", ["email"], unique=True)
+    op.create_index(op.f("ix_user_username"), "user", ["username"], unique=True)
 
-    # Create login_activities table
     op.create_table(
-        "login_activities",
+        "login_activity",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=True),
         sa.Column("email_attempted", sa.String(), nullable=False),
@@ -51,26 +53,26 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(
             ["user_id"],
-            ["users.id"],
+            ["user.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(
-        op.f("ix_login_activities_id"), "login_activities", ["id"], unique=False
+        op.f("ix_login_activity_id"), "login_activity", ["id"], unique=False
     )
     op.create_index(
-        op.f("ix_login_activities_user_id"),
-        "login_activities",
+        op.f("ix_login_activity_user_id"),
+        "login_activity",
         ["user_id"],
         unique=False,
     )
 
 
 def downgrade() -> None:
-    op.drop_index(op.f("ix_login_activities_user_id"), table_name="login_activities")
-    op.drop_index(op.f("ix_login_activities_id"), table_name="login_activities")
-    op.drop_table("login_activities")
-    op.drop_index(op.f("ix_users_username"), table_name="users")
-    op.drop_index(op.f("ix_users_email"), table_name="users")
-    op.drop_index(op.f("ix_users_id"), table_name="users")
-    op.drop_table("users")
+    op.drop_index(op.f("ix_login_activity_user_id"), table_name="login_activity")
+    op.drop_index(op.f("ix_login_activity_id"), table_name="login_activity")
+    op.drop_table("login_activity")
+    op.drop_index(op.f("ix_user_username"), table_name="user")
+    op.drop_index(op.f("ix_user_email"), table_name="user")
+    op.drop_index(op.f("ix_user_id"), table_name="user")
+    op.drop_table("user")

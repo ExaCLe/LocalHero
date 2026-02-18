@@ -5,6 +5,9 @@ from sqlalchemy import text
 from .database import engine
 from .routers import auth
 from .schemas.health import HealthResponse
+from .security.jwt import validate_jwt_config
+
+validate_jwt_config()
 
 app = FastAPI()
 
@@ -21,7 +24,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routers
 app.include_router(auth.router)
 
 

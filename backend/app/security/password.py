@@ -6,7 +6,6 @@ from pwdlib.hashers.argon2 import Argon2Hasher  # type: ignore[import-not-found]
 
 _password_hash: Any = PasswordHash((Argon2Hasher(),))
 
-# Load common passwords blocklist into memory at module load time
 _blocklist: set[str] = set()
 _blocklist_path = Path(__file__).parent / "data" / "common_passwords.txt"
 if _blocklist_path.exists():
@@ -15,31 +14,22 @@ if _blocklist_path.exists():
 
 
 def hash_password(plain: str) -> str:
-    """Hash a plaintext password using Argon2."""
     return cast(str, _password_hash.hash(plain))
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    """Verify a plaintext password against a hashed password."""
     return cast(bool, _password_hash.verify(plain, hashed))
 
 
 def validate_password_strength(password: str) -> list[str]:
-    """
-    Validate password strength and return a list of validation errors.
-    Returns an empty list if the password is valid.
-    """
     errors: list[str] = []
 
-    # Minimum 10 characters
     if len(password) < 10:
         errors.append("Password must be at least 10 characters long")
 
-    # Maximum 64 characters
     if len(password) > 64:
         errors.append("Password must be at most 64 characters long")
 
-    # Check against common password blocklist (case-insensitive)
     if password.lower() in _blocklist:
         errors.append("Password is too common. Please choose a more unique password")
 

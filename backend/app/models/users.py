@@ -7,7 +7,7 @@ from app.database import Base
 
 
 class User(Base):
-    __tablename__ = "users"
+    __tablename__ = "user"
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
@@ -30,10 +30,10 @@ class User(Base):
 
 
 class LoginActivity(Base):
-    __tablename__ = "login_activities"
+    __tablename__ = "login_activity"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)
+    user_id = Column(Integer, ForeignKey("user.id"), nullable=True, index=True)
     email_attempted = Column(String, nullable=False)
     ip_address = Column(String, nullable=False)
     user_agent = Column(String, nullable=False)
