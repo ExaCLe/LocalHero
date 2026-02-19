@@ -1,6 +1,12 @@
 .DS_Store
 .env
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
 # Ignore everything in .idea by default
 .idea/*
 

@@ -8,3 +8,6 @@ pytest
 pre-commit
 httpx
 testcontainers[test]
+pwdlib[argon2]
+pyjwt
+pydantic[email]
