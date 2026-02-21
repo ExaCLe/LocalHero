@@ -21,13 +21,6 @@ export default function Navbar() {
         {/* Logo / Brand */}
         <div className="flex shrink-0 items-center">
           <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
-            <Image
-              src="/public/images/localhero-logo-first.png"
-              alt="LocalHero Logo"
-              width={40}
-              height={40}
-              className="h-10 w-auto"
-            />
             <span>LocalHero</span>
           </Link>
         </div>
