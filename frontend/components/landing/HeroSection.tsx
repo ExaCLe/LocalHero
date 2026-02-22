@@ -17,7 +17,7 @@ export function HeroSection() {
         className="absolute right-0 top-0 h-full w-full object-cover"
       >
         <source
-          src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
+          src="https://res.cloudinary.com/demo/video/upload/sea_turtle.mp4"
           type="video/mp4"
         />
         Your browser does not support the video tag.
