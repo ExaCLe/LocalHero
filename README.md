@@ -23,7 +23,7 @@ alembic upgrade head
 ```
 5. Start the backend server
 ```bash
-uvicorn main:app --reload
+uvicorn app.main:app --reload
 ```
 or if using PyCharm, run the configuration for `Backend`.
 

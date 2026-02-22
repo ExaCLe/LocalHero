@@ -12,7 +12,7 @@ rendering with Next.js App Router (SSR/RSC) communicating with FastAPI via REST.
 ### Backend (from `backend/` directory)
 
 ```bash
-uvicorn main:app --reload              # Start dev server (http://localhost:8000)
+uvicorn app.main:app --reload          # Start dev server (http://localhost:8000)
 pytest -q --maxfail=1 --cov=.          # Run tests with coverage
 alembic upgrade head                   # Apply all migrations
 alembic revision --autogenerate -m "message"  # Create new migration
