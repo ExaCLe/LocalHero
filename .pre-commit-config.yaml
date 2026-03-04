@@ -1,60 +1,11 @@
 repos:
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.14.8
-    hooks:
-      - id: ruff
-        args: [ --fix ]
-        files: ^backend/.*\.py$
-
-  - repo: https://github.com/psf/black
-    rev: 25.11.0
-    hooks:
-      - id: black
-        files: ^backend/.*\.py$
-
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.19.0
-    hooks:
-      - id: mypy
-        pass_filenames: false
-        args:
-          - --config-file
-          - mypy.ini
-          - backend/app
-          - backend/tests
-        additional_dependencies:
-          - python-dotenv
-          - types-requests
-          - types-setuptools
-          - types-PyYAML
-          - types-networkx
-          - pandas-stubs
-          - types-tqdm
-          - sqlalchemy2-stubs
-          - types-psycopg2
-          - pydantic
-          - fastapi
-
   - repo: local
     hooks:
-      - id: sync-openapi-types
-        name: Sync OpenAPI schema & frontend TS types
-        language: python
-        pass_filenames: false
-        entry: python backend/scripts/sync_openapi_types.py
-        additional_dependencies:
-          - fastapi
-          - "uvicorn[standard]"
-          - pydantic
-          - sqlalchemy
-          - psycopg2-binary
-          - python-dotenv
-          
       - id: frontend-eslint
-        name: Frontend ESLint (next lint)
+        name: Frontend ESLint
         language: system
         pass_filenames: false
-        types_or: [ javascript, jsx, ts, tsx ]
+        types_or: [javascript, jsx, ts, tsx]
         files: ^frontend/
         entry: bash
         args:
@@ -65,10 +16,9 @@ repos:
         name: Frontend TypeScript type-check
         language: system
         pass_filenames: false
-        types_or: [ ts, tsx ]
+        types_or: [ts, tsx]
         files: ^frontend/
         entry: bash
         args:
           - -lc
           - cd frontend && npm run type-check
-

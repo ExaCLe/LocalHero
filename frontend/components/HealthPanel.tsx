@@ -1,6 +1,9 @@
-import type {components} from "@/src/lib/openapi-types";
-
-export type HealthResponse = components["schemas"]["HealthResponse"];
+export type HealthResponse = {
+  status: "ok" | "error";
+  database: "connected" | "disconnected";
+  backend: "convex";
+  timestampIso: string;
+};
 
 type Props = {
   health: HealthResponse | null;
@@ -13,8 +16,8 @@ export function HealthPanel({health}: Readonly<Props>) {
   if (health === null) {
     return (
       <p style={{color: "#b91c1c"}}>
-        Cannot reach backend at{" "}
-        <code>{process.env.NEXT_PUBLIC_API_BASE_URL}/health</code>.
+        Cannot reach Convex backend. Set <code>NEXT_PUBLIC_CONVEX_URL</code> and
+        run <code>npm run convex:dev</code>.
       </p>
     );
   }
@@ -29,11 +32,11 @@ export function HealthPanel({health}: Readonly<Props>) {
             marginBottom: "0.5rem",
           }}
         >
-          ✅ Healthy
+          Healthy
         </p>
         <p style={{color: "#4b5563"}}>
-          Status: <code>{health.status}</code>, DB:{" "}
-          <code>{health.database}</code>
+          Status: <code>{health.status}</code>, DB: <code>{health.database}</code>,
+          Backend: <code>{health.backend}</code>
         </p>
       </>
     );
@@ -48,11 +51,11 @@ export function HealthPanel({health}: Readonly<Props>) {
           marginBottom: "0.5rem",
         }}
       >
-        ⚠️ Unhealthy
+        Unhealthy
       </p>
       <p style={{color: "#4b5563"}}>
-        Status: <code>{health.status}</code>, DB:{" "}
-        <code>{health.database}</code>
+        Status: <code>{health.status}</code>, DB: <code>{health.database}</code>,
+        Backend: <code>{health.backend}</code>
       </p>
     </>
   );

@@ -1,24 +1,21 @@
-import {HealthPanel, HealthResponse} from "../components/HealthPanel";
+import Link from "next/link";
+import { ConvexHttpClient } from "convex/browser";
+import { anyApi } from "convex/server";
+import { HealthPanel, type HealthResponse } from "../components/HealthPanel";
 
 async function getHealth(): Promise<HealthResponse | null> {
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
 
-  if (!baseUrl) {
-    console.error("NEXT_PUBLIC_API_BASE_URL is not set");
+  if (!convexUrl) {
     return null;
   }
 
   try {
-    const res = await fetch(`${baseUrl}/health`, {cache: "no-store"});
-
-    if (!res.ok) {
-      console.error("Health check failed:", res.status, res.statusText);
-      return null;
-    }
-
-    return res.json();
-  } catch (err) {
-    console.error("Error calling /health:", err);
+    const client = new ConvexHttpClient(convexUrl);
+    const response = await client.query(anyApi.health.status, {});
+    return response as HealthResponse;
+  } catch (error) {
+    console.error("Failed to query Convex health status", error);
     return null;
   }
 }
@@ -43,12 +40,23 @@ export default async function HomePage() {
           border: "1px solid #ddd",
           boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
           textAlign: "center",
+          minWidth: 360,
         }}
       >
-        <h1 style={{fontSize: "1.8rem", marginBottom: "1rem"}}>
-          Backend Health
-        </h1>
-        <HealthPanel health={health}/>
+        <h1 style={{fontSize: "1.8rem", marginBottom: "1rem"}}>Backend Health</h1>
+        <HealthPanel health={health} />
+
+        <nav
+          style={{
+            marginTop: "1.25rem",
+            display: "flex",
+            justifyContent: "center",
+            gap: "1rem",
+          }}
+        >
+          <Link href="/login">Login</Link>
+          <Link href="/register">Register</Link>
+        </nav>
       </div>
     </main>
   );

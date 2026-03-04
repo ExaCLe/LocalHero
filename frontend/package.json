@@ -8,12 +8,15 @@
     "start": "next start",
     "lint": "eslint",
     "type-check": "tsc --noEmit",
+    "convex:dev": "convex dev",
+    "convex:dev:once": "convex dev --once",
+    "convex:codegen": "convex codegen",
     "test": "playwright test",
-    "test:e2e": "playwright test",
-    "generate-openapi-types": "openapi-typescript ../backend/openapi.json --output src/lib/openapi-types.ts"
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@playwright/test": "^1.57.0",
+    "convex": "^1.32.0",
     "install": "^0.13.0",
     "next": "16.0.7",
     "npm": "^11.6.4",
@@ -27,7 +30,6 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.0.7",
-    "openapi-typescript": "^7.10.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

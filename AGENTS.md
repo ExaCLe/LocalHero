@@ -4,18 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-LocalHero is a full-stack web application with a Python FastAPI backend and Next.js TypeScript frontend. Uses hybrid
-rendering with Next.js App Router (SSR/RSC) communicating with FastAPI via REST.
+LocalHero is a full-stack web application using a Convex backend and a Next.js TypeScript frontend.
+The frontend uses Next.js App Router (SSR/RSC) and can call Convex functions directly.
 
 ## Commands
 
-### Backend (from `backend/` directory)
+### Convex Backend (from `frontend/` directory)
 
 ```bash
-uvicorn main:app --reload              # Start dev server (http://localhost:8000)
-pytest -q --maxfail=1 --cov=.          # Run tests with coverage
-alembic upgrade head                   # Apply all migrations
-alembic revision --autogenerate -m "message"  # Create new migration
+npm run convex:dev       # Start Convex dev workflow (configures + deploys dev functions)
+npm run convex:dev:once  # One-time Convex push/codegen step
+npm run convex:codegen   # Regenerate Convex generated types (requires configured deployment)
 ```
 
 ### Frontend (from `frontend/` directory)
@@ -25,56 +24,49 @@ npm run dev          # Start dev server (http://localhost:3000)
 npm run build        # Production build
 npm run lint         # ESLint
 npm run type-check   # TypeScript check
-npm test             # Jest tests
-npm test -- path/to/test.tsx  # Run single test file
+npm test             # Playwright tests
+npm test -- path/to/spec.ts  # Run a single Playwright spec
 ```
 
 ### Pre-commit (from root)
 
 ```bash
-pre-commit run --all-files  # Run all hooks (ruff, black, mypy, eslint, type-check)
+pre-commit run --all-files  # Run frontend lint + type-check hooks
 ```
 
 ## Architecture
 
 ```
 LocalHero/
-├── backend/           # FastAPI + SQLAlchemy + PostgreSQL
-│   ├── app/
-│   │   ├── main.py        # FastAPI app entry, routes
-│   │   ├── database.py    # DB connection & session
-│   │   ├── models.py      # SQLAlchemy ORM models
-│   │   ├── schemas.py     # Pydantic request/response schemas
-│   │   └── crud.py        # Database operations
-│   ├── alembic/           # Migration scripts
-│   └── tests/             # pytest tests
-├── frontend/          # Next.js 16 + React 19 + TypeScript
-│   ├── app/               # Next.js App Router pages
-│   ├── components/        # React components
-│   └── __tests__/         # Jest + React Testing Library
+├── frontend/               # Next.js 16 + React 19 + TypeScript + Convex
+│   ├── app/                # Next.js App Router pages
+│   ├── convex/             # Convex functions and schema
+│   ├── components/         # Shared React components
+│   └── tests/              # Playwright E2E tests
+├── .github/workflows/      # CI (frontend + pre-commit)
 └── .pre-commit-config.yaml
 ```
 
 ## Environment Setup
 
-**Backend `.env`:**
+**Frontend `frontend/.env.local`:**
 
-```
-DATABASE_URL=postgresql+psycopg2://postgres:postgres@localhost:5432/local_hero
+```bash
+NEXT_PUBLIC_CONVEX_URL=<your-convex-deployment-url>
 ```
 
-**Frontend `.env.local`:**
+Optional for Convex CLI / self-hosted Convex (Convex OSS) setups:
 
-```
-NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+```bash
+CONVEX_DEPLOYMENT=<deployment-name>
+CONVEX_SELF_HOSTED_URL=<self-hosted-convex-url>
 ```
 
 ## Key Configuration
 
-- **Python:** 3.11+, Black (88 chars), Ruff (140 chars), MyPy strict mode
-- **TypeScript:** Strict mode, ES2017 target
-- **Database:** PostgreSQL 15
-- **CI:** Runs lint, backend tests, and frontend tests in parallel
+- **TypeScript:** Strict mode, ES2017 target (Next.js app) + Convex TS config in `frontend/convex/tsconfig.json`
+- **Backend Runtime:** Convex functions (`frontend/convex/*`)
+- **CI:** Runs pre-commit and frontend Playwright tests
 
 ## Coding Standards
 
@@ -83,11 +75,11 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 - **Be descriptive, no abbreviations:** `user_profile` not `data`, `calculate_total` not `calc_tot`
 - **Include units in numeric variables:** `timeout_seconds`, `file_size_bytes`, `price_usd`
 - **No Hungarian notation:** `users` not `list_users`
-- **No generic filenames:** Use `date_formatting.py` not `utils.py` or `helpers.py`
+- **No generic filenames:** Use `date-formatting.ts` not `utils.ts` or `helpers.ts`
 - **Casing:**
-    - Python: `snake_case` for variables/functions, `PascalCase` for classes/Pydantic models
     - TypeScript: `camelCase` for variables/functions, `PascalCase` for components, `kebab-case` for filenames
-- **Consistency across stack:** If it's `user_id` in the database, don't call it `uid` in frontend
+    - Convex function exports: descriptive names (`status`, `createUser`, `listUsers`)
+- **Consistency across stack:** Keep naming consistent between frontend code, Convex schema, and function args
 
 ### Comments
 
@@ -96,19 +88,20 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 
 ### Testing
 
-- **Prioritize integration tests** over unit tests - test vertical slices (endpoint → DB → response)
-- **Avoid excessive mocking** - use real test database, only mock external APIs (Stripe, SendGrid)
-- **Backend:** pytest with TestClient
-- **Frontend:** Playwright/Cypress for E2E; avoid heavy Jest unit testing for simple UI components
+- **Prioritize integration/E2E tests** over isolated component tests when validating user flows
+- **Avoid excessive mocking** - prefer real page interactions in Playwright
+- **Frontend:** Playwright for E2E; keep UI smoke tests focused and reliable
+- **Convex:** Test through user-visible flows or server-side integration points when possible
 
-### Backend Patterns
+### Backend Patterns (Convex)
 
-- Use Pydantic models for all requests, responses, and environment validation
-- Use FastAPI `Depends` for DB sessions and auth
-- Prefer synchronous SQLAlchemy unless performance requires async
-- All DB changes via Alembic migrations only
+- Put backend functions in `frontend/convex/`
+- Use Convex queries/mutations/actions for backend logic instead of custom FastAPI routes
+- Keep schemas in `frontend/convex/schema.ts`
+- Prefer typed Convex function references when codegen is available; use generic builders only when bootstrapping/migrating
 
 ### Frontend Patterns
 
-- Fetch data in Server Components to reduce client-side waterfalls
-- Generate TypeScript interfaces from FastAPI OpenAPI schema for type safety
+- Fetch data in Server Components when practical to reduce client waterfalls
+- Keep auth pages and forms simple unless a design system is established
+- Use `NEXT_PUBLIC_CONVEX_URL` for Convex client configuration

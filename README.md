@@ -1,63 +1,73 @@
-# Setup Instructions
+# LocalHero
 
-## Backend Setup
-1. Create database:
-```bash
-psql -U postgres -h localhost -c "CREATE DATABASE local_hero;"
-touch backend/.env
-echo "DATABASE_URL=postgresql://postgres:password@localhost:5432/local_hero" > backend/.env
-```
-2. Install dependencies
-```bash
-# it is recommended to use a virtual environment
-cd backend
-pip install -r requirements.txt
-```
-3. Create the .env file
-```bash
-echo "DATABASE_URL=postgresql+psycopg2://postgres:postgres@localhost:5432/local_hero" > .env
-```
-4. Run migrations
-```bash
-alembic upgrade head
-```
-5. Start the backend server
-```bash
-uvicorn main:app --reload
-```
-or if using PyCharm, run the configuration for `Backend`.
+## Setup Instructions
 
+### Frontend + Convex Setup
 
-## Frontend Setup
 1. Install dependencies
 ```bash
 cd frontend
 npm install
 ```
 
+2. Create local env file
+```bash
+cp .env.local.example .env.local
+```
+
+3. Start Convex (backend)
+```bash
+npm run convex:dev
+```
+
+4. Start Next.js frontend
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+## Vercel Deployment
+
+### Deploy
+
+1. Import the repository in Vercel.
+2. Set the project root to `frontend/` (or configure Vercel to build from that directory).
+3. Use the default Next.js framework settings.
+
+### Environment Variables (Vercel)
+
+Set these in Vercel Project Settings -> Environment Variables.
+
+Create the variable for both deployment environments:
+
+- `Preview`
+- `Production`
+
+```bash
+NEXT_PUBLIC_CONVEX_URL=https://<your-convex-deployment>.convex.cloud
+```
+
+If you use separate Convex deployments, set different values per environment:
+
+- `Preview`: `https://<your-preview-deployment>.convex.cloud`
+- `Production`: `https://<your-production-deployment>.convex.cloud`
+
+Notes:
+
+- `NEXT_PUBLIC_CONVEX_URL` is required for both client-side and server-side app code in this project.
+- This configuration allows both Vercel Preview deployments and Production deployments to run correctly.
+- `CONVEX_DEPLOYMENT` and `CONVEX_SELF_HOSTED_URL` are typically for local CLI/dev workflows and are not required for a standard Vercel deployment of this frontend.
+
 ## Pre-Commit Hooks
+
 ```bash
 pre-commit install
-```
-You can now run it manually using:
-```bash
 pre-commit run --all-files
 ```
 
-# Development
+## Development Notes
 
-## Backend
-### Migrations
-You can create a new migration using:
-```bash
-alembic revision --autogenerate -m "add items table"
-```
-Then apply the migration using (there also is a run config in PyCharm):
-```bash
-alembic upgrade head
-```
-You can undo the last migration using:
-```bash
-alembic downgrade -1
-```
-Have Fun!
+- Convex backend functions live in `frontend/convex/`.
+- `NEXT_PUBLIC_CONVEX_URL` is required for the app to call Convex.
+- For self-hosted Convex (Convex OSS), set `CONVEX_SELF_HOSTED_URL` in `frontend/.env.local`.

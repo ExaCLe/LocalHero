@@ -1,5 +1,7 @@
 .DS_Store
 .env
+frontend/.env.local
+frontend/convex/_generated/
 
 # Ignore everything in .idea by default
 .idea/*
